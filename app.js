@@ -55,7 +55,19 @@ class Map extends React.Component {
 
   }
 
-  shouldComponentUpdate() {
+  shouldComponentUpdate(nextProps, nextState) {
+    let center = this.map.getCenter()
+    let currentZoom = this.map.getZoom()
+    let nextZoom = parseFloat(nextProps.zoom)
+    let lat = parseFloat(nextProps.center[1])
+    let lng = parseFloat(nextProps.center[0])
+    //If the URL was set by this.props.router.push above
+    //nextProps and the current map state would be the same
+    if(!(lat === center.lat && lng === center.lng && nextZoom == currentZoom)){
+      //Out of sync, so the URL is being set by the user pushing
+      //back/forward buttons
+      this.map.jumpTo({center: new mapboxgl.LngLat(lng, lat), zoom: nextZoom})
+    }
     return false
   }
 

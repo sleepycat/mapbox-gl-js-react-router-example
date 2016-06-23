@@ -148,7 +148,19 @@
 	    }
 	  }, {
 	    key: 'shouldComponentUpdate',
-	    value: function shouldComponentUpdate() {
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      var center = this.map.getCenter();
+	      var currentZoom = this.map.getZoom();
+	      var nextZoom = parseFloat(nextProps.zoom);
+	      var lat = parseFloat(nextProps.center[1]);
+	      var lng = parseFloat(nextProps.center[0]);
+	      //If the URL was set by this.props.router.push above
+	      //nextProps and the current map state would be the same
+	      if (!(lat === center.lat && lng === center.lng && nextZoom == currentZoom)) {
+	        //Out of sync, so the URL is being set by the user pushing
+	        //back/forward buttons
+	        this.map.jumpTo({ center: new _mapboxGl2.default.LngLat(lng, lat), zoom: nextZoom });
+	      }
 	      return false;
 	    }
 	  }, {
